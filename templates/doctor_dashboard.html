@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% set title = "Doctor Dashboard - CKD Prediction" %}
+
+{% block content %}
+  <div class="split-head">
+    <div>
+      <h2 class="section-title">Doctor Dashboard</h2>
+      <div class="muted">
+        Logged in as {{ user['name'] }} ({{ user['email'] }}){% if user['department'] %} &middot; {{ user['department'] }}{% endif %}
+      </div>
+    </div>
+    <a class="link" href="{{ url_for('logout') }}">Logout</a>
+  </div>
+
+  <div class="button-row doctor-actions">
+    <a class="btn btn-secondary" href="#predictions">View All Predictions</a>
+    <a class="btn btn-secondary" href="#patients">View Patient Data</a>
+    <a class="btn btn-secondary" href="#new">New CKD Prediction</a>
+  </div>
+
+  <div class="doctor-grid">
+    <section class="panel-card" id="new">
+      <h3 class="panel-title">New CKD Prediction</h3>
+      <form class="form" id="doctorPredictForm" action="{{ url_for('doctor_check_ckd') }}" method="post">
+        <div class="grid-auto">
+          <div class="field">
+            <label>Patient ID</label>
+            <input type="number" name="patient_id" min="1" placeholder="e.g., 12" required />
+          </div>
+          <div class="field">
+            <label>Serum Creatinine</label>
+            <input type="number" step="0.01" min="0.01" name="sc" placeholder="e.g., 1.10" required />
+          </div>
+          <div class="field">
+            <label>Albumin</label>
+            <input type="number" step="0.01" min="0" name="al" placeholder="e.g., 3.90" required />
+          </div>
+          <div class="field">
+            <label>Haemoglobin</label>
+            <input type="number" step="0.01" min="0.01" name="hemo" placeholder="e.g., 13.50" required />
+          </div>
+          <div class="field">
+            <label>Blood Pressure</label>
+            <input type="number" step="1" min="1" name="bp" placeholder="e.g., 120" required />
+          </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Check CKD</button>
+      </form>
+
+      <div class="hint muted">
+        Use the Patient ID from the &ldquo;View Patient Data&rdquo; table.
+      </div>
+    </section>
+
+    <section class="panel-card" id="results">
+      <h3 class="panel-title">Prediction &amp; Results</h3>
+
+      {% if last_result %}
+        <div class="result-card {{ 'bad' if last_result.prediction else 'ok' }}">
+          <div class="result-title">
+            {{ 'CKD Risk' if last_result.prediction else 'No CKD Detected' }}
+          </div>
+          <div class="result-body">
+            <div class="result-row">
+              <div class="result-label">Patient</div>
+              <div class="result-value">{{ last_result.patient_name }} (ID: {{ last_result.patient_id }})</div>
+            </div>
+            <div class="result-row">
+              <div class="result-label">Email</div>
+              <div class="result-value">{{ last_result.patient_email }}</div>
+            </div>
+            <div class="result-row">
+              <div class="result-label">Confidence</div>
+              <div class="result-value">{{ "%.2f"|format(last_result.risk) }}%</div>
+            </div>
+            <div class="result-row">
+              <div class="result-label">Risk Level</div>
+              <div class="result-value">{{ last_result.risk_level }}</div>
+            </div>
+            <div class="result-row">
+              <div class="result-label">Checked At</div>
+              <div class="result-value nowrap">{{ last_result.created_at }}</div>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div class="muted center result-empty">Run a new prediction to see results here.</div>
+      {% endif %}
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      const form = document.getElementById("doctorPredictForm");
+      if (!form) return;
+      form.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && e.target && e.target.tagName === "INPUT") {
+          e.preventDefault();
+        }
+      });
+    })();
+  </script>
+
+  <section class="panel-card mt-16" id="patients">
+    <div class="split-head">
+      <h3 class="panel-title">View Patient Data</h3>
+      <div class="muted">{{ patients|length }} patient(s)</div>
+    </div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Patient ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Joined</th>
+            <th>Records</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in patients %}
+            <tr>
+              <td>{{ p['id'] }}</td>
+              <td>{{ p['name'] }}</td>
+              <td>{{ p['email'] }}</td>
+              <td class="nowrap">{{ p['created_at'] }}</td>
+              <td>{{ p['record_count'] }}</td>
+              <td class="right">
+                <a class="btn btn-small" href="{{ url_for('doctor_view_patient', patient_user_id=p['id']) }}">View</a>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" class="muted center">No patients registered yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel-card mt-16" id="predictions">
+    <div class="split-head">
+      <h3 class="panel-title">View All Predictions</h3>
+      <div class="muted">{{ predictions|length }} shown</div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Date &amp; Time</th>
+            <th>Patient</th>
+            <th>SC</th>
+            <th>AL</th>
+            <th>Hemo</th>
+            <th>BP</th>
+            <th>eGFR</th>
+            <th>Prediction</th>
+            <th>Risk</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in predictions %}
+            <tr>
+              <td class="nowrap">{{ r['created_at'] }}</td>
+              <td class="nowrap">{{ r['patient_name'] }} ({{ r['patient_id'] }})</td>
+              <td>{{ r['sc'] }}</td>
+              <td>{{ r['al'] }}</td>
+              <td>{{ r['hemo'] }}</td>
+              <td>{{ r['bp'] }}</td>
+              <td>{{ r['egfr'] }}</td>
+              <td>
+                <span class="pill {{ 'pill-bad' if r['prediction'] else 'pill-ok' }}">
+                  {{ 'CKD' if r['prediction'] else 'No CKD' }}
+                </span>
+              </td>
+              <td>{{ "%.2f"|format(r['risk']) }}%</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="9" class="muted center">No predictions yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

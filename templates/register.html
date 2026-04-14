@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - CKD Prediction System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Patient Registration</h1>
+        <form action="/register_patient" method="post">
+            <label for="name">Name:</label>
+            <input type="text" name="name" required>
+            <label for="age">Age:</label>
+            <input type="number" name="age" required>
+            <label for="gender">Gender:</label>
+            <select name="gender" required>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+            </select>
+            <button type="submit">Register</button>
+        </form>
+        <p><a href="/">Back to Login</a></p>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+    </div>
+</body>
+</html>

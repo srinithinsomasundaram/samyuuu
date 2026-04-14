@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CKD Prediction System - Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Chronic Kidney Disease Prediction System</h1>
+        <div class="login-form">
+            <h2>Login</h2>
+            <form action="/login" method="post">
+                <label for="user_type">User Type:</label>
+                <select name="user_type" id="user_type" onchange="toggleFields()">
+                    <option value="doctor">Doctor</option>
+                    <option value="patient">Patient</option>
+                </select>
+                <div id="doctor_fields">
+                    <label for="username">Username:</label>
+                    <input type="text" name="username" required>
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" required>
+                </div>
+                <div id="patient_fields" style="display:none;">
+                    <label for="patient_id">Patient ID:</label>
+                    <input type="text" name="patient_id" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <p>New patient? <a href="/register">Register here</a></p>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class="flashes">
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+    <script>
+        function toggleFields() {
+            const userType = document.getElementById('user_type').value;
+            document.getElementById('doctor_fields').style.display = userType === 'doctor' ? 'block' : 'none';
+            document.getElementById('patient_fields').style.display = userType === 'patient' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>

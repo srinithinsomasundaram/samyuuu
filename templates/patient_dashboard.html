@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% set title = "Patient Dashboard - CKD Prediction" %}
+
+{% block content %}
+  <div class="split-head">
+    <div>
+      <h2 class="section-title">Welcome, {{ user['name'] }}</h2>
+      <div class="muted">Email: {{ user['email'] }} &middot; Age: {{ user['age'] }} &middot; Gender: {{ user['gender'] }}</div>
+    </div>
+    <a class="link" href="{{ url_for('logout') }}">Logout</a>
+  </div>
+
+  <section class="panel-card">
+    <h3 class="panel-title">Enter Details</h3>
+    <form class="form" id="patientPredictForm" action="{{ url_for('submit_details') }}" method="post">
+      <div class="grid-auto">
+        <div class="field">
+          <label>Serum Creatinine</label>
+          <input type="number" step="0.01" min="0.01" name="sc" placeholder="e.g., 1.10" required />
+        </div>
+        <div class="field">
+          <label>Albumin</label>
+          <input type="number" step="0.01" min="0" name="al" placeholder="e.g., 3.90" required />
+        </div>
+        <div class="field">
+          <label>Haemoglobin</label>
+          <input type="number" step="0.01" min="0.01" name="hemo" placeholder="e.g., 13.50" required />
+        </div>
+        <div class="field">
+          <label>Blood Pressure</label>
+          <input type="number" step="1" min="1" name="bp" placeholder="e.g., 120" required />
+        </div>
+      </div>
+
+      <button class="btn btn-primary" type="submit">Submit Details</button>
+    </form>
+  </section>
+
+  <script>
+    (function () {
+      const form = document.getElementById("patientPredictForm");
+      if (!form) return;
+      form.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && e.target && e.target.tagName === "INPUT") {
+          e.preventDefault();
+        }
+      });
+    })();
+  </script>
+
+  <section class="panel-card mt-16">
+    <div class="split-head">
+      <h3 class="panel-title">Saved Details</h3>
+      <div class="muted">{{ records|length }} record(s)</div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Date &amp; Time</th>
+            <th>SC</th>
+            <th>AL</th>
+            <th>Hemo</th>
+            <th>BP</th>
+            <th>eGFR</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in records %}
+            <tr>
+              <td class="nowrap">{{ record['created_at'] }}</td>
+              <td>{{ record['sc'] }}</td>
+              <td>{{ record['al'] }}</td>
+              <td>{{ record['hemo'] }}</td>
+              <td>{{ record['bp'] }}</td>
+              <td>{{ record['egfr'] }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" class="muted center">No saved details yet. Submit your first values.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% set title = "Home - CKD Prediction" %}
+{% set layout = "landing" %}
+{% set body_class = "landing" %}
+
+{% block content %}
+  <div class="landing-wrap">
+    <div class="landing-hero">
+      <h1 class="landing-title">Protect Kidney Health</h1>
+      <div class="landing-quote" id="landingQuote">Early detection is the best protection.</div>
+
+      <div class="role-cards" role="list">
+        <div class="role-card" role="listitem">
+          <div class="role-card-inner">
+            <div class="role-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  fill="currentColor"
+                  d="M12 12a4.2 4.2 0 1 0-4.2-4.2A4.2 4.2 0 0 0 12 12Zm0 2.1c-4 0-7.2 2.3-7.2 5.1V21h14.4v-1.8c0-2.8-3.2-5.1-7.2-5.1Z"
+                />
+              </svg>
+            </div>
+            <p class="role-name">Patient</p>
+            <div class="role-actions">
+              <a href="{{ url_for('patient_auth') }}?tab=login">Login</a>
+              <span aria-hidden="true">|</span>
+              <a href="{{ url_for('patient_auth') }}?tab=register">Register</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="role-card" role="listitem">
+          <div class="role-card-inner">
+            <div class="role-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <!-- Stethoscope icon -->
+                <path
+                  fill="currentColor"
+                  d="M19 2a1 1 0 0 1 1 1v4a5 5 0 0 1-4 4.9V14a3.5 3.5 0 1 1-2 3.2V12h-1a7 7 0 0 1-7-7V3a1 1 0 1 1 2 0v2h2V3a1 1 0 1 1 2 0v2h2V3a1 1 0 1 1 2 0v2h2V3a1 1 0 0 1 1-1ZM8 7V5H7v0A5 5 0 0 0 12 10h1a3 3 0 0 0 3-3V5h-2v2a1 1 0 1 1-2 0V5h-2v2a1 1 0 1 1-2 0V5H8v2a1 1 0 0 1-2 0Z"
+                />
+                <path
+                  fill="currentColor"
+                  d="M17.5 16.2a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6Z"
+                  opacity="0.9"
+                />
+              </svg>
+            </div>
+            <p class="role-name">Doctor</p>
+            <div class="role-actions">
+              <a href="{{ url_for('doctor_auth') }}?tab=login">Login</a>
+              <span aria-hidden="true">|</span>
+              <a href="{{ url_for('doctor_auth') }}?tab=register">Register</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const el = document.getElementById("landingQuote");
+      if (!el) return;
+      const quotes = [
+        "Early detection is the best protection.",
+        "Know your numbers. Track kidney health.",
+        "Small checks today can prevent big problems tomorrow.",
+        "Better data, better decisions — for patients and doctors.",
+      ];
+      let i = 0;
+      setInterval(() => {
+        i = (i + 1) % quotes.length;
+        el.textContent = quotes[i];
+      }, 4500);
+    })();
+  </script>
+{% endblock %}

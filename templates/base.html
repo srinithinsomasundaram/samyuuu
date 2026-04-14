@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ title or 'CKD Prediction' }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body class="{{ body_class or '' }}" data-theme="dark">
+    <div class="bg"></div>
+
+    <button class="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path
+          d="M21 14.2A8.5 8.5 0 1 1 9.8 3a7 7 0 0 0 11.2 11.2Z"
+          fill="currentColor"
+        />
+      </svg>
+    </button>
+
+    {% if layout != 'landing' %}
+      <header class="topbar">
+        <div class="topbar-inner">
+          <a class="brand" href="{{ url_for('home') }}">
+            <div class="brand-mark">CKD</div>
+            <div class="brand-text">
+              <div class="brand-title">Chronic Kidney Disease Prediction</div>
+              <div class="brand-subtitle">Patient &amp; Doctor Portal</div>
+            </div>
+          </a>
+          <div class="topbar-actions">
+            {% if session.get('user_id') %}
+              <a class="link" href="{{ url_for('logout') }}">Logout</a>
+            {% endif %}
+          </div>
+        </div>
+      </header>
+    {% endif %}
+
+    <main class="page {{ 'page-landing' if layout == 'landing' else '' }}">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="alerts {{ 'landing-alerts' if layout == 'landing' else '' }}">
+            {% for message in messages %}
+              <div class="alert">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% if layout != 'landing' %}<div class="card">{% endif %}
+      {% block content %}{% endblock %}
+      {% if layout != 'landing' %}</div>{% endif %}
+    </main>
+
+    <script>
+      (function () {
+        const storageKey = "ckd_theme";
+        const body = document.body;
+        const btn = document.querySelector(".theme-toggle");
+
+        const apply = (theme) => {
+          body.dataset.theme = theme;
+          try { localStorage.setItem(storageKey, theme); } catch (e) {}
+        };
+
+        try {
+          const saved = localStorage.getItem(storageKey);
+          if (saved === "light" || saved === "dark") apply(saved);
+        } catch (e) {}
+
+        if (btn) {
+          btn.addEventListener("click", () => {
+            apply(body.dataset.theme === "light" ? "dark" : "light");
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% set title = "Patient Records - CKD Prediction" %}
+
+{% block content %}
+  <div class="split-head">
+    <div>
+      <h2 class="section-title">Patient Records</h2>
+      <div class="muted">
+        {{ patient['name'] }} &middot; {{ patient['email'] }}
+        {% if patient['age'] %} &middot; Age: {{ patient['age'] }}{% endif %}
+        {% if patient['gender'] %} &middot; Gender: {{ patient['gender'] }}{% endif %}
+      </div>
+    </div>
+    <div class="button-row">
+      <a class="btn btn-small" href="{{ url_for('doctor_dashboard') }}">Back</a>
+      <a class="btn btn-small btn-ghost" href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </div>
+
+  <section class="panel-card">
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Date &amp; Time</th>
+            <th>SC</th>
+            <th>AL</th>
+            <th>Hemo</th>
+            <th>BP</th>
+            <th>eGFR</th>
+            <th>Prediction</th>
+            <th>Risk</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in records %}
+            <tr>
+              <td class="nowrap">{{ record['created_at'] }}</td>
+              <td>{{ record['sc'] }}</td>
+              <td>{{ record['al'] }}</td>
+              <td>{{ record['hemo'] }}</td>
+              <td>{{ record['bp'] }}</td>
+              <td>{{ record['egfr'] }}</td>
+              <td>
+                <span class="pill {{ 'pill-bad' if record['prediction'] else 'pill-ok' }}">
+                  {{ 'CKD' if record['prediction'] else 'No CKD' }}
+                </span>
+              </td>
+              <td>{{ "%.2f"|format(record['risk']) }}%</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="8" class="muted center">No records for this patient yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

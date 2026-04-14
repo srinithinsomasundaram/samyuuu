@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict CKD - {{ patient['patient name'] }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Predict CKD for {{ patient['patient name'] }}</h1>
+        <form action="/predict/{{ patient['patient id'] }}" method="post">
+            <label for="sc">Serum Creatinine (mg/dL):</label>
+            <input type="number" step="0.01" name="sc" placeholder="e.g., 1.0" required>
+            <label for="al">Albumin (mg/g UACR):</label>
+            <input type="number" step="0.01" name="al" placeholder="e.g., 3.90" required>
+            <label for="hemo">Haemoglobin (g/dL):</label>
+            <input type="number" step="0.01" name="hemo" placeholder="e.g., 12.3" required>
+            <label for="bp">Systolic Blood Pressure (mmHg):</label>
+            <input type="number" name="bp" placeholder="e.g., 130" required>
+            <button type="submit">Predict</button>
+        </form>
+        <p><a href="/doctor_dashboard">Back to Dashboard</a></p>
+    </div>
+</body>
+</html>

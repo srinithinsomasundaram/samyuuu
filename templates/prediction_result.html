@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Prediction Result</h1>
+        <p>Prediction: {{ 'Chronic Kidney Disease Detected' if prediction else 'No Chronic Kidney Disease' }}</p>
+        <p>Risk Percentage: {{ "%.2f"|format(risk) }}%</p>
+        <h2>AI Generated Explanation and Advice</h2>
+        <p>{{ explanation }}</p>
+        <p><a href="/doctor_dashboard">Back to Dashboard</a></p>
+    </div>
+</body>
+</html>

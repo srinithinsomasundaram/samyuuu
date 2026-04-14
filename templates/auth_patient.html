@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% set title = "Patient Login - CKD Prediction" %}
+
+{% block content %}
+  <div class="split-head">
+    <h2 class="section-title">Patient Portal</h2>
+    <a class="link" href="{{ url_for('home') }}">Back</a>
+  </div>
+
+  <div class="auth-shell">
+    <aside class="auth-aside">
+      <h3 class="auth-aside-title">Your kidney health, made simpler.</h3>
+      <p class="auth-aside-text">
+        Log in to submit your clinical values and track eGFR-based kidney health insights over time.
+      </p>
+      <p class="auth-aside-text">
+        Tip: Always enter accurate lab values and consult a clinician for medical decisions.
+      </p>
+    </aside>
+
+    <section class="auth-main">
+      <div class="tabs" data-tabs="patient">
+        <button class="tab active" type="button" data-tab="login">Login</button>
+        <button class="tab" type="button" data-tab="register">Register</button>
+      </div>
+
+      <div class="tab-panels">
+        <section class="panel active" data-panel="login">
+          <form class="form" action="{{ url_for('patient_login') }}" method="post">
+            <div class="field">
+              <label>Email</label>
+              <input type="email" name="email" placeholder="name@example.com" autocomplete="email" required />
+            </div>
+            <div class="field">
+              <label>Password</label>
+              <input type="password" name="password" placeholder="Your password" autocomplete="current-password" required />
+            </div>
+            <button class="btn btn-primary" type="submit">Login</button>
+          </form>
+        </section>
+
+        <section class="panel" data-panel="register">
+          <form class="form" action="{{ url_for('patient_register') }}" method="post">
+            <div class="grid-2">
+              <div class="field">
+                <label>Full Name</label>
+                <input type="text" name="name" placeholder="Your full name" autocomplete="name" required />
+              </div>
+              <div class="field">
+                <label>Email</label>
+                <input type="email" name="email" placeholder="name@example.com" autocomplete="email" required />
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="field">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Create a password" autocomplete="new-password" required />
+              </div>
+              <div class="field">
+                <label>Age</label>
+                <input type="number" name="age" min="1" placeholder="e.g., 28" required />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Gender</label>
+              <select name="gender" required>
+                <option value="" selected disabled>Select</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+              </select>
+            </div>
+
+            <button class="btn btn-secondary" type="submit">Register</button>
+          </form>
+        </section>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      const root = document.querySelector('[data-tabs="patient"]');
+      if (!root) return;
+      const tabButtons = root.querySelectorAll('[data-tab]');
+      const panels = root.closest('.auth-main').querySelectorAll('[data-panel]');
+
+      const initial = new URLSearchParams(window.location.search).get('tab');
+      if (initial === 'register') {
+        const btn = root.querySelector('[data-tab="register"]');
+        if (btn) btn.click();
+      }
+      tabButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          tabButtons.forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          const name = btn.getAttribute('data-tab');
+          panels.forEach((p) => p.classList.toggle('active', p.getAttribute('data-panel') === name));
+        });
+      });
+    })();
+  </script>
+{% endblock %}

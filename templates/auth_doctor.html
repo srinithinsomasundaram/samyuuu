@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% set title = "Doctor Login - CKD Prediction" %}
+
+{% block content %}
+  <div class="split-head">
+    <h2 class="section-title">Doctor Portal</h2>
+    <a class="link" href="{{ url_for('home') }}">Back</a>
+  </div>
+
+  <div class="auth-shell">
+    <aside class="auth-aside">
+      <h3 class="auth-aside-title">Clinical decision support, faster.</h3>
+      <p class="auth-aside-text">
+        Log in to review patient records, run new CKD predictions, and track confidence and risk levels.
+      </p>
+      <p class="auth-aside-text">
+        Reminder: This tool supports workflows — it doesn’t replace clinical judgment.
+      </p>
+    </aside>
+
+    <section class="auth-main">
+      <div class="tabs" data-tabs="doctor">
+        <button class="tab active" type="button" data-tab="login">Login</button>
+        <button class="tab" type="button" data-tab="register">Register</button>
+      </div>
+
+      <div class="tab-panels">
+        <section class="panel active" data-panel="login">
+          <form class="form" action="{{ url_for('doctor_login') }}" method="post">
+            <div class="field">
+              <label>Email</label>
+              <input type="email" name="email" placeholder="name@hospital.com" autocomplete="email" required />
+            </div>
+            <div class="field">
+              <label>Password</label>
+              <input type="password" name="password" placeholder="Your password" autocomplete="current-password" required />
+            </div>
+            <button class="btn btn-primary" type="submit">Login</button>
+          </form>
+        </section>
+
+        <section class="panel" data-panel="register">
+          <form class="form" action="{{ url_for('doctor_register') }}" method="post">
+            <div class="grid-2">
+              <div class="field">
+                <label>Full Name</label>
+                <input type="text" name="name" placeholder="Dr. Your Name" autocomplete="name" required />
+              </div>
+              <div class="field">
+                <label>Email</label>
+                <input type="email" name="email" placeholder="name@hospital.com" autocomplete="email" required />
+              </div>
+            </div>
+            <div class="field">
+              <label>Password</label>
+              <input type="password" name="password" placeholder="Create a password" autocomplete="new-password" required />
+            </div>
+            <div class="field">
+              <label>Department</label>
+              <input type="text" name="department" placeholder="e.g., Nephrology" required />
+            </div>
+            <button class="btn btn-secondary" type="submit">Register</button>
+          </form>
+        </section>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      const root = document.querySelector('[data-tabs="doctor"]');
+      if (!root) return;
+      const tabButtons = root.querySelectorAll('[data-tab]');
+      const panels = root.closest('.auth-main').querySelectorAll('[data-panel]');
+
+      const initial = new URLSearchParams(window.location.search).get('tab');
+      if (initial === 'register') {
+        const btn = root.querySelector('[data-tab="register"]');
+        if (btn) btn.click();
+      }
+      tabButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          tabButtons.forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          const name = btn.getAttribute('data-tab');
+          panels.forEach((p) => p.classList.toggle('active', p.getAttribute('data-panel') === name));
+        });
+      });
+    })();
+  </script>
+{% endblock %}
